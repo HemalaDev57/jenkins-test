@@ -4,24 +4,24 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checkout the current repo'
+                sh "echo 'Checkout the current repo'"
                 sleep 3
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Running build...'
+                sh "echo 'Running build...'"
                 sleep 5
-                echo 'Build successful'
+                sh "echo 'Build successful'"
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running test...'
+                sh "echo 'Running test...'"
                 sleep 5
-                echo 'Test successful'
+                sh "echo 'Test successful'"
             }
         }
 
