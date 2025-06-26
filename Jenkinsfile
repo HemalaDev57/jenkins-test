@@ -1,4 +1,7 @@
 pipeline {
+    triggers {
+        cron('H/5 * * * *') // Runs every 5 minutes
+    }
     agent any
     stages {
         stage('Stage-0 new naming') {
