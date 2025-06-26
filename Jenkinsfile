@@ -22,5 +22,12 @@ pipeline {
                 echo 'Test successful'
             }
         }
+        stage('Deploy stage') {
+            steps {
+                echo 'Deploying in stage environment...'
+                sleep 5
+                echo 'Successfully deployed in stage'
+            }
+        }
     }
 }
