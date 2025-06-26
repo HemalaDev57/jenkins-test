@@ -1,85 +1,50 @@
 pipeline {
     agent any
-
     stages {
-        stage('Checkout') {
+        stage('Stage-0 new naming') {
             steps {
-                sh "echo 'Checkout the current repo'"
-                sleep 3
+                withMockLoad(averageDuration: 3, testFailureIgnore: false) {
+                    sh MOCK_LOAD_COMMAND
+                }
             }
         }
-
-        stage('Build') {
-            steps {
-                sh "echo 'Running build...'"
-                sleep 5
-                sh "echo 'Build successful'"
+        stage('Stage-1') {
+            parallel {
+                stage('Stage-1.1') {
+                    agent {label "agent-1"}
+                    steps {
+                        sh "echo 'first step ON DEMO!!!!'"
+                        withMockLoad(averageDuration: 3, testFailureIgnore: false) {
+                            sh MOCK_LOAD_COMMAND
+                        }
+                        sh "echo 'Execution completed'"
+                    }
+                }
+                stage('Stage-1.2') {
+                    stages {
+                        stage('1.2.1') {
+                            steps {
+                                withMockLoad(averageDuration: 9, testFailureIgnore: false) {
+                                    sh MOCK_LOAD_COMMAND
+                                }
+                            }
+                        }
+                        stage('1.2.2') {
+                            agent {label "agent-1"}
+                            steps {
+                                withMockLoad(averageDuration: 9, testFailureIgnore: false) {
+                                    sh MOCK_LOAD_COMMAND
+                                }
+                            }
+                        }   
+                    }
+                }
             }
         }
-
         stage('Test') {
             steps {
-                sh "echo 'Running test...'"
-                sleep 5
-                sh "echo 'Test successful'"
-            }
-        }
-
-        stage('Deploy and Test - Stage & QA') {
-            parallel {
-                stage('Stage Deploy & Test') {
-                    stages {
-                        stage('Deploy Stage') {
-                            steps {
-                                echo 'Deploying in stage environment...'
-                                sleep 5
-                                echo 'Successfully deployed in stage'
-                            }
-                        }
-                        stage('Test Stage') {
-                            steps {
-                                echo 'Running automated test in stage...'
-                                sleep 5
-                                echo 'Successfully deployed and tested in stage'
-                            }
-                        }
-                    }
-                }
-
-                stage('QA Deploy & Test') {
-                    stages {
-                        stage('Deploy QA') {
-                            steps {
-                                echo 'Deploying in QA environment...'
-                                sleep 5
-                                echo 'Successfully deployed in QA'
-                            }
-                        }
-                        stage('Test QA') {
-                            steps {
-                                echo 'Running automated test in QA...'
-                                sleep 5
-                                echo 'Successfully deployed and tested in QA'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Deploy Prod') {
-            steps {
-                echo 'Deploying in prod environment...'
-                sleep 5
-                echo 'Successfully deployed in prod'
-            }
-        }
-
-        stage('Automated test - prod') {
-            steps {
-                echo 'Running automated test in prod...'
-                sleep 5
-                echo 'Successfully deployed and tested in prod'
+                sh 'mvn clean test'
+                junit 'target/surefire-reports/*.xml'
             }
         }
     }
