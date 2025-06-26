@@ -2,10 +2,24 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Checkout') {
             steps {
-                echo 'Hello World'
+                echo 'Checkout the current repo'
+                sleep 3
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Running build...'
                 sleep 5
+                echo 'Build successful'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running test...'
+                sleep 5
+                echo 'Test successful'
             }
         }
     }
