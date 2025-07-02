@@ -11,7 +11,7 @@ pipeline {
             steps {
                 sh '''
                     rm -rf myrepo
-                    git clone --branch ${GIT_BRANCH} ${GIT_REPO} myrepo
+                    git clone --branch ${GIT_BRANCH} https://github.com/HemalaDev57/jenkins-test.git myrepo
                     cd myrepo
                     echo "=== Commit Info ==="
                     git log -1 --pretty=fuller
