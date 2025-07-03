@@ -24,7 +24,6 @@ pipeline {
                 echo 'Build completed successfully!'
             }
         }
-
         stage('Parallel Tests') {
             parallel {
                 stage('Unit Tests') {
