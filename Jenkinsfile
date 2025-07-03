@@ -18,7 +18,7 @@ pipeline {
                 '''
             }
         }
-        stage('Build') {
+        stage('Deploy to Dev') {
             steps {
                 echo 'Running build step...'
                 echo 'Build completed successfully!'
