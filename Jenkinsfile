@@ -4,82 +4,64 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                sh "echo 'Checkout the current repo'"
-                sleep 3
+                checkout scm
             }
         }
-
-        stage('Build') {
+        stage('Manual Git Checkout') {
             steps {
-                sh "echo 'Running build...'"
-                sleep 15
-                sh "echo 'Build successful'"
+                sh '''
+                    rm -rf myrepo
+                    git clone --branch ${GIT_BRANCH} https://github.com/HemalaDev57/jenkins-test.git myrepo
+                    cd myrepo
+                    echo "=== Commit Info ==="
+                    git log -1 --pretty=fuller
+                '''
             }
         }
-
-        stage('Test') {
+        stage('Deploy to Dev') {
             steps {
-                sh "echo 'Running test...'"
-                sleep 15
-                sh "echo 'Test successful'"
+                echo 'Running build step...'
+                echo 'Build completed successfully!'
             }
         }
-
-        stage('Deploy and Test - Stage & QA') {
+        stage('Parallel Tests') {
             parallel {
-                stage('Stage Deploy & Test') {
-                    stages {
-                        stage('Deploy Stage') {
-                            steps {
-                                echo 'Deploying in stage environment...'
-                                sleep 15
-                                echo 'Successfully deployed in stage'
-                            }
-                        }
-                        stage('Test Stage') {
-                            steps {
-                                echo 'Running automated test in stage...'
-                                sleep 15
-                                echo 'Successfully deployed and tested in stage'
-                            }
-                        }
+                stage('Unit Tests') {
+                    steps {
+                        echo 'Running unit tests...'
                     }
                 }
-
-                stage('QA Deploy & Test') {
-                    stages {
-                        stage('Deploy QA') {
-                            steps {
-                                echo 'Deploying in QA environment...'
-                                sleep 15
-                                echo 'Successfully deployed in QA'
-                            }
-                        }
-                        stage('Test QA') {
-                            steps {
-                                echo 'Running automated test in QA...'
-                                sleep 15
-                                echo 'Successfully deployed and tested in QA'
-                            }
-                        }
+                stage('Integration Tests') {
+                    steps {
+                        echo 'Running integration tests...'
+                    }
+                }
+                stage('Static Analysis') {
+                    steps {
+                        echo 'Running static code analysis...'
                     }
                 }
             }
         }
 
-        stage('Deploy Prod') {
-            steps {
-                echo 'Deploying in prod environment...'
-                sleep 20
-                echo 'Successfully deployed in prod'
+        stage('Nested Deploy') {
+            stages {
+                stage('Deploy to Dev') {
+                    steps {
+                        echo 'Deploying to Dev environment...'
+                    }
+                }
+                stage('Deploy to QA') {
+                    steps {
+                        echo 'Deploying to QA environment...'
+                    }
+                }
             }
         }
 
-        stage('Automated test - prod') {
+        stage('Cleanup') {
             steps {
-                echo 'Running automated test in prod...'
-                sleep 10
-                echo 'Successfully deployed and tested in prod'
+                echo 'Cleaning up workspace...'
             }
         }
     }
