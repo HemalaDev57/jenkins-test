@@ -4,20 +4,22 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building..' 
-                sleep 5
+                echo 'Building...'
+                sh 'echo "Hello from Build stage!"'
             }
         }
+
         stage('Test') {
             steps {
-                echo 'Testing..'
-                sleep 5
+                echo 'Testing...'
+                sh 'echo "Running some dummy tests..."'
             }
         }
+
         stage('Deploy') {
             steps {
-                echo 'Deploying....'
-                sleep 5
+                echo 'Deploying...'
+                sh 'echo "Pretending to deploy..."'
             }
         }
     }
